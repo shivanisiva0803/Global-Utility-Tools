@@ -2,38 +2,35 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(to right, #667eea, #764ba2);
   margin: 0;
-  padding: 0;
 }
 
 .container {
-  width: 400px;
+  width: 420px;
   margin: 60px auto;
   background: white;
   padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 25px;
-  color: #333;
+  margin-bottom: 20px;
 }
 
 label {
   font-weight: 600;
-  margin-top: 10px;
   display: block;
+  margin-top: 10px;
 }
 
 input, select {
   width: 100%;
   padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  font-size: 14px;
 }
 
 button {
@@ -43,44 +40,45 @@ button {
   background: #667eea;
   color: white;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   transition: 0.3s;
+  margin-top: 8px;
 }
 
 button:hover {
   background: #5a67d8;
 }
 
-#result {
-  margin-top: 20px;
-  font-weight: bold;
-  text-align: center;
-  color: #222;
+.small-btn {
+  background: #444;
 }
 
-/* Improve searchable dropdown */
+.swap-btn {
+  background: #333;
+}
+
+#result {
+  margin-top: 15px;
+  padding: 12px;
+  background: #f7f7f7;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 16px;
+}
+
+#currentTime {
+  margin-top: 10px;
+  font-size: 13px;
+  text-align: center;
+  color: #555;
+}
+
+/* Tom Select */
 .ts-control {
   border-radius: 8px !important;
-  padding: 8px !important;
-}
-
-.ts-dropdown {
-  border-radius: 8px;
 }
 
 .ts-dropdown .option {
   padding: 10px;
 }
-
-/* Optional: better result box */
-#result {
-  margin-top: 20px;
-  font-weight: bold;
-  text-align: center;
-  color: #222;
-  background: #f7f7f7;
-  padding: 12px;
-  border-radius: 8px;
-}
-
