@@ -2,9 +2,9 @@ const DateTime = luxon.DateTime;
 
 let fp;
 
-/* ---------------------------
+/* ==========================
    INIT
----------------------------- */
+========================== */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -23,52 +23,74 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 300);
 });
 
-/* ---------------------------
-   TIMEZONE LIST
----------------------------- */
+/* ==========================
+   TIMEZONE DATA
+========================== */
 
 function loadTimezones() {
 
-    let zones = [];
+    const zones = [
 
-    try {
-        zones = Intl.supportedValuesOf("timeZone");
-    } catch {
-        zones = [
-            "Asia/Kolkata",
-            "Asia/Dubai",
-            "Asia/Tokyo",
-            "Europe/London",
-            "Europe/Paris",
-            "America/New_York",
-            "America/Chicago",
-            "America/Los_Angeles",
-            "Australia/Sydney"
-        ];
+        "Asia/Kolkata",
+        "Asia/Dubai",
+        "Asia/Singapore",
+        "Asia/Tokyo",
+        "Asia/Shanghai",
+
+        "Europe/London",
+        "Europe/Paris",
+        "Europe/Berlin",
+        "Europe/Rome",
+
+        "America/New_York",
+        "America/Chicago",
+        "America/Denver",
+        "America/Los_Angeles",
+        "America/Toronto",
+
+        "Australia/Sydney",
+        "Australia/Melbourne",
+
+        "Africa/Cairo",
+        "Africa/Johannesburg",
+
+        "Pacific/Auckland"
+    ];
+
+    function getFlag(zone) {
+
+        if (zone.startsWith("Asia")) return "🌏";
+        if (zone.startsWith("Europe")) return "🇪🇺";
+        if (zone.startsWith("America")) return "🌎";
+        if (zone.startsWith("Australia")) return "🇦🇺";
+        if (zone.startsWith("Africa")) return "🌍";
+        if (zone.startsWith("Pacific")) return "🌊";
+
+        return "🌐";
     }
 
-    const data = zones.map(z => ({
-        id: z,
-        text: z
+    const data = zones.map(zone => ({
+
+        id: zone,
+
+        text:
+            `${getFlag(zone)} ${zone} (GMT${DateTime.now()
+                .setZone(zone)
+                .toFormat("ZZ")})`
     }));
 
     $("#fromTimezone").select2({
-        data: data,
+        data,
         width: "100%"
     });
 
     $("#toTimezone").select2({
-        data: data,
+        data,
         width: "100%"
     });
 
-    const userTZ =
-        Intl.DateTimeFormat()
-            .resolvedOptions()
-            .timeZone;
-
     $("#fromTimezone")
-        .val(userTZ)
+        .val("Asia/Kolkata")
         .trigger("change");
 
     $("#toTimezone")
@@ -81,41 +103,52 @@ function loadTimezones() {
     updateCurrentTime();
 }
 
-/* ---------------------------
+/* ==========================
    CURRENT TIME
----------------------------- */
+========================== */
 
 function updateCurrentTime() {
 
-    const tz = $("#fromTimezone").val();
+    const zone =
+        $("#fromTimezone").val();
 
     const now = DateTime.now()
-        .setZone(tz)
-        .toFormat("cccc, dd LLL yyyy, hh:mm a");
+        .setZone(zone)
+        .toFormat(
+            "cccc, dd LLL yyyy, hh:mm a"
+        );
 
-    document.getElementById("currentTime")
-        .innerHTML = `Current time: ${now}`;
+    document.getElementById(
+        "currentTime"
+    ).innerHTML =
+        `Current time: ${now}`;
 }
 
-/* ---------------------------
+/* ==========================
    SET NOW
----------------------------- */
+========================== */
 
 function setNow() {
 
-    fp.setDate(new Date(), true);
+    fp.setDate(
+        new Date(),
+        true
+    );
 
     convertTime();
 }
 
-/* ---------------------------
+/* ==========================
    SWAP
----------------------------- */
+========================== */
 
 function swapTimezones() {
 
-    const from = $("#fromTimezone").val();
-    const to = $("#toTimezone").val();
+    const from =
+        $("#fromTimezone").val();
+
+    const to =
+        $("#toTimezone").val();
 
     $("#fromTimezone")
         .val(to)
@@ -128,32 +161,31 @@ function swapTimezones() {
     convertTime();
 }
 
-/* ---------------------------
+/* ==========================
    CONVERT
----------------------------- */
+========================== */
 
 function convertTime() {
 
-    const fromTZRaw = $("#fromTimezone").val();
-    const toTZRaw = $("#toTimezone").val();
+    if (!fp.selectedDates.length) {
 
-    // Normalize aliases
-    const aliasMap = {
-        "Asia/Calcutta": "Asia/Kolkata"
-    };
+        document.getElementById("result")
+            .innerHTML =
+            "Select date and time";
 
-    const fromTZ = aliasMap[fromTZRaw] || fromTZRaw;
-    const toTZ = aliasMap[toTZRaw] || toTZRaw;
-
-    if (!fp || !fp.selectedDates.length) {
-        document.getElementById("result").innerHTML =
-            "Please select a date and time";
         return;
     }
 
-    const d = fp.selectedDates[0];
+    const fromZone =
+        $("#fromTimezone").val();
 
-    const source = luxon.DateTime.fromObject(
+    const toZone =
+        $("#toTimezone").val();
+
+    const d =
+        fp.selectedDates[0];
+
+    const sourceDate = DateTime.fromObject(
         {
             year: d.getFullYear(),
             month: d.getMonth() + 1,
@@ -162,69 +194,85 @@ function convertTime() {
             minute: d.getMinutes()
         },
         {
-            zone: fromTZ
+            zone: fromZone
         }
     );
 
-    if (!source.isValid) {
+    if (!sourceDate.isValid) {
 
-        document.getElementById("result").innerHTML = `
-            <div style="color:red">
-                Source invalid<br>
-                Reason: ${source.invalidReason}<br>
-                ${source.invalidExplanation || ""}
-            </div>
-        `;
+        document.getElementById("result")
+            .innerHTML =
+            "Invalid source timezone";
 
-        console.log("SOURCE", source);
         return;
     }
 
-    const converted = source.setZone(toTZ);
+    const targetDate =
+        sourceDate.setZone(toZone);
 
-    if (!converted.isValid) {
+    if (!targetDate.isValid) {
 
-        document.getElementById("result").innerHTML = `
-            <div style="color:red">
-                Target invalid<br>
-                Reason: ${converted.invalidReason}<br>
-                ${converted.invalidExplanation || ""}
-            </div>
-        `;
+        document.getElementById("result")
+            .innerHTML =
+            "Invalid target timezone";
 
-        console.log("TARGET", converted);
         return;
     }
 
-    document.getElementById("result").innerHTML = `
-        <div style="color:#777">
-            ${fromTZ} → ${toTZ}
+    document.getElementById("result")
+        .innerHTML =
+
+        `
+        <div style="
+            color:#666;
+            font-size:13px;
+            margin-bottom:10px;
+        ">
+            ${fromZone}
+            →
+            ${toZone}
         </div>
 
         <div style="
             font-size:28px;
-            font-weight:bold;
-            margin-top:10px;
+            font-weight:700;
+            color:#4361ee;
         ">
-            ${converted.toFormat("cccc, dd LLL yyyy")}
+            ${targetDate.toFormat(
+                "cccc, dd LLL yyyy"
+            )}
         </div>
 
         <div style="
+            margin-top:10px;
             font-size:22px;
-            margin-top:8px;
+            font-weight:600;
         ">
-            ${converted.toFormat("hh:mm a")}
+            ${targetDate.toFormat(
+                "hh:mm a"
+            )}
         </div>
-    `;
+
+        <div style="
+            margin-top:10px;
+            color:#777;
+            font-size:13px;
+        ">
+            GMT${targetDate.toFormat("ZZ")}
+        </div>
+        `;
 }
 
-/* ---------------------------
+/* ==========================
    ENTER KEY
----------------------------- */
+========================== */
 
-document.addEventListener("keydown", e => {
+document.addEventListener(
+    "keydown",
+    function (e) {
 
-    if (e.key === "Enter") {
-        convertTime();
+        if (e.key === "Enter") {
+            convertTime();
+        }
     }
-});
+);
