@@ -2,33 +2,45 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(to right, #667eea, #764ba2);
   margin: 0;
+  transition: background 0.3s;
 }
 
-/* Card container */
+/* Dark mode */
+body.dark {
+  background: #121212;
+}
+
+/* Card */
 .container {
   width: 420px;
   margin: 60px auto;
   background: white;
-  padding: 30px;
-  border-radius: 14px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  transition: all 0.3s;
 }
 
-/* Spacing between all elements */
-.container > * {
+body.dark .container {
+  background: #1e1e1e;
+  color: #eee;
+}
+
+/* Title */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Form spacing */
+.form-group {
   margin-bottom: 14px;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 15px;
-  font-weight: 600;
-}
-
-/* Labels */
 label {
-  font-weight: 600;
   font-size: 14px;
+  font-weight: 600;
 }
 
 /* Inputs */
@@ -40,76 +52,82 @@ input, select {
   font-size: 14px;
 }
 
-/* Primary button */
-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  background: #667eea;
+body.dark input,
+body.dark select {
+  background: #2a2a2a;
+  border: 1px solid #444;
   color: white;
-  border-radius: 10px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.25s ease;
 }
 
-/* Hover effect */
+/* Button row */
+.button-row {
+  display: flex;
+  gap: 10px;
+}
+
+/* Buttons */
+button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #667eea;
+  color: white;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
 button:hover {
-  background: #5a67d8;
   transform: translateY(-1px);
+  background: #5a67d8;
 }
 
 /* Secondary buttons */
-.small-btn {
+.secondary {
   background: #4a5568;
 }
 
-.small-btn:hover {
+.secondary:hover {
   background: #2d3748;
 }
 
-.swap-btn {
-  background: #2d3748;
-}
-
-.swap-btn:hover {
-  background: #1a202c;
-}
-
-/* Space between stacked buttons */
-button + button {
-  margin-top: 10px;
-}
-
-/* Result UI */
+/* Result box */
 #result {
   margin-top: 15px;
-  padding: 12px;
-  background: #f7f7f7;
-  border-radius: 8px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #f5f5f5;
   text-align: center;
-  font-size: 16px;
+}
+
+body.dark #result {
+  background: #2a2a2a;
 }
 
 /* Current time */
 #currentTime {
-  font-size: 13px;
   text-align: center;
-  color: #555;
+  font-size: 13px;
+  color: #666;
 }
 
-/* ✅ Tom Select fixes */
+body.dark #currentTime {
+  color: #aaa;
+}
+
+/* Dropdown fix */
 .ts-control {
   border-radius: 8px !important;
-  padding: 8px !important;
 }
 
-.ts-dropdown {
-  border-radius: 8px;
-}
+/* Mobile */
+@media (max-width: 500px) {
+  .container {
+    width: 90%;
+    margin: 30px auto;
+  }
 
-.ts-dropdown .option {
-  padding: 10px;
-  display: flex;
-  gap: 6px;
+  .button-row {
+    flex-direction: column;
+  }
 }
