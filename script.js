@@ -5,7 +5,7 @@ const timezones = Intl.supportedValuesOf('timeZone');
 const fromSelect = document.getElementById("fromTimezone");
 const toSelect = document.getElementById("toTimezone");
 
-// ✅ Flag + region map
+/* ✅ Flag mapping */
 function getFlag(tz) {
   if (tz.startsWith("Asia")) return "🌏";
   if (tz.startsWith("Europe")) return "🇪🇺";
@@ -16,12 +16,12 @@ function getFlag(tz) {
   return "🌐";
 }
 
-// ✅ Offset function
+/* ✅ GMT Offset */
 function getOffset(tz) {
   return DateTime.now().setZone(tz).toFormat("ZZ");
 }
 
-// ✅ Populate dropdowns
+/* ✅ Populate dropdown */
 timezones.forEach(tz => {
   const label = `${getFlag(tz)} ${tz} (GMT${getOffset(tz)})`;
 
@@ -29,17 +29,35 @@ timezones.forEach(tz => {
   toSelect.add(new Option(label, tz));
 });
 
-// ✅ Auto detect timezone
+/* ✅ Auto detect user timezone */
 const userTZ = DateTime.local().zoneName;
 
 fromSelect.value = userTZ || "Asia/Kolkata";
 toSelect.value = "America/New_York";
 
-// ✅ Enable search dropdown
-const fromTS = new TomSelect("#fromTimezone", { create: false });
-const toTS = new TomSelect("#toTimezone", { create: false });
+/* ✅ Searchable dropdown with FIXED behavior */
+const fromTS = new TomSelect("#fromTimezone", {
+  create: false,
+  allowEmptyOption: true,
+  selectOnTab: false,
+  closeAfterSelect: true
+});
 
-// ✅ Swap
+const toTS = new TomSelect("#toTimezone", {
+  create: false,
+  allowEmptyOption: true,
+  selectOnTab: false,
+  closeAfterSelect: true
+});
+
+/* ✅ Prevent unwanted auto-select */
+[fromTS, toTS].forEach(ts => {
+  ts.on('blur', () => {
+    ts.close();
+  });
+});
+
+/* ✅ Swap */
 function swapTimezones() {
   const temp = fromTS.getValue();
 
@@ -49,16 +67,17 @@ function swapTimezones() {
   updateCurrentTime();
 }
 
-// ✅ Use current time
+/* ✅ Set current time */
 function setNow() {
   const now = DateTime.now().toISO({
     suppressSeconds: true,
     includeOffset: false
   });
+
   document.getElementById("timeInput").value = now;
 }
 
-// ✅ Update current time preview
+/* ✅ Live current time display */
 function updateCurrentTime() {
   const tz = fromSelect.value;
 
@@ -73,7 +92,7 @@ function updateCurrentTime() {
 fromSelect.addEventListener("change", updateCurrentTime);
 updateCurrentTime();
 
-// ✅ Convert
+/* ✅ Convert function */
 function convertTime() {
 
   const input = document.getElementById("timeInput").value;
