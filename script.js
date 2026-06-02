@@ -187,17 +187,11 @@ function swapTimezones() {
 function convertTime() {
 
     const input =
-        document.getElementById(
-            "timeInput"
-        ).value;
+        document.getElementById("timeInput").value;
 
     if (!input) {
 
-        document.getElementById(
-            "result"
-        ).innerHTML =
-            "Select date and time";
-
+        alert("Please select date and time");
         return;
     }
 
@@ -207,11 +201,9 @@ function convertTime() {
     const toTZ =
         $("#toTimezone").val();
 
-    if (!fromTZ || !toTZ) return;
+    try {
 
-    const sourceDate =
-
-        DateTime.fromFormat(
+        const sourceDate = DateTime.fromFormat(
             input,
             "yyyy-MM-dd HH:mm",
             {
@@ -219,24 +211,20 @@ function convertTime() {
             }
         );
 
-    if (!sourceDate.isValid) {
+        if (!sourceDate.isValid) {
 
-        document.getElementById(
-            "result"
-        ).innerHTML =
-            "Invalid date/time";
+            document.getElementById("result").innerHTML =
+                `<div style="color:red">
+                    Invalid date/time format
+                 </div>`;
 
-        return;
-    }
+            return;
+        }
 
-    const converted =
+        const converted =
+            sourceDate.setZone(toTZ);
 
-        sourceDate
-            .setZone(toTZ);
-
-    document.getElementById(
-        "result"
-    ).innerHTML =
+        document.getElementById("result").innerHTML =
 
         `
         <div style="
@@ -244,9 +232,7 @@ function convertTime() {
             font-size:13px;
             margin-bottom:10px;
         ">
-            ${fromTZ}
-            →
-            ${toTZ}
+            ${fromTZ} → ${toTZ}
         </div>
 
         <div style="
@@ -261,14 +247,32 @@ function convertTime() {
 
         <div style="
             margin-top:8px;
-            font-size:20px;
+            font-size:22px;
             font-weight:600;
         ">
             ${converted.toFormat(
                 "hh:mm a"
             )}
         </div>
+
+        <div style="
+            margin-top:10px;
+            color:#666;
+            font-size:13px;
+        ">
+            GMT${converted.toFormat("ZZ")}
+        </div>
         `;
+
+    } catch (err) {
+
+        console.error(err);
+
+        document.getElementById("result").innerHTML =
+            `<div style="color:red">
+                Conversion failed
+             </div>`;
+    }
 }
 
 /* ---------------------------
