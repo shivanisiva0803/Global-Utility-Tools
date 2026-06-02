@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Timezone Converter</title>
 
+  <!-- Main CSS -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- Tom Select -->
+  <!-- Tom Select CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
 </head>
 
@@ -17,29 +18,50 @@
 
   <h1>🌍 Timezone Converter</h1>
 
-  <label>Enter Time</label>
-  <input type="datetime-local" id="timeInput">
+  <!-- Time input -->
+  <div class="form-group">
+    <label>Enter Time</label>
+    <input type="datetime-local" id="timeInput">
+  </div>
 
-  <button class="small-btn" onclick="setNow()">Use Current Time</button>
+  <!-- Quick actions -->
+  <div class="button-row">
+    <button class="secondary" onclick="setNow()">Now</button>
+    <button class="secondary" onclick="swapTimezones()">⇄ Swap</button>
+  </div>
 
-  <label>From Timezone</label>
-  <select id="fromTimezone"></select>
+  <!-- From timezone -->
+  <div class="form-group">
+    <label>From Timezone</label>
+    <select id="fromTimezone"></select>
+  </div>
 
-  <label>To Timezone</label>
-  <select id="toTimezone"></select>
+  <!-- To timezone -->
+  <div class="form-group">
+    <label>To Timezone</label>
+    <select id="toTimezone"></select>
+  </div>
 
-  <button class="swap-btn" onclick="swapTimezones()">⇄ Swap</button>
-
+  <!-- Convert button -->
   <button onclick="convertTime()">Convert</button>
 
+  <!-- Dark mode toggle -->
+  <button class="secondary" onclick="toggleTheme()">🌙 Toggle Mode</button>
+
+  <!-- Live current time -->
   <div id="currentTime"></div>
+
+  <!-- Result -->
   <div id="result"></div>
 
 </div>
 
+<!-- Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-<script src="script.js?v=3"></script>
+
+<!-- Your script -->
+<script src="script.js?v=4"></script>
 
 </body>
 </html>
