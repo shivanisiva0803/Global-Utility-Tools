@@ -186,47 +186,51 @@ function swapTimezones() {
 
 function convertTime() {
 
-    const input =
-        document.getElementById("timeInput").value;
+    const fromTZ = $("#fromTimezone").val();
+    const toTZ = $("#toTimezone").val();
 
-    if (!input) {
+    if (!fp || !fp.selectedDates.length) {
 
         alert("Please select date and time");
         return;
     }
 
-    const fromTZ =
-        $("#fromTimezone").val();
+    // Get JS Date directly from Flatpickr
+    const selectedDate = fp.selectedDates[0];
 
-    const toTZ =
-        $("#toTimezone").val();
+    // Create DateTime in source timezone
+    const sourceDate = luxon.DateTime
+        .fromJSDate(selectedDate)
+        .setZone(fromTZ, {
+            keepLocalTime: true
+        });
 
-    try {
+    if (!sourceDate.isValid) {
 
-        const sourceDate = DateTime.fromFormat(
-            input,
-            "yyyy-MM-dd HH:mm",
-            {
-                zone: fromTZ
-            }
-        );
-
-        if (!sourceDate.isValid) {
-
-            document.getElementById("result").innerHTML =
-                `<div style="color:red">
-                    Invalid date/time format
-                 </div>`;
-
-            return;
-        }
-
-        const converted =
-            sourceDate.setZone(toTZ);
+        console.log(sourceDate.invalidReason);
+        console.log(sourceDate.invalidExplanation);
 
         document.getElementById("result").innerHTML =
+            "Invalid source timezone";
 
-        `
+        return;
+    }
+
+    const converted =
+        sourceDate.setZone(toTZ);
+
+    if (!converted.isValid) {
+
+        console.log(converted.invalidReason);
+        console.log(converted.invalidExplanation);
+
+        document.getElementById("result").innerHTML =
+            "Invalid target timezone";
+
+        return;
+    }
+
+    document.getElementById("result").innerHTML = `
         <div style="
             color:#777;
             font-size:13px;
@@ -236,13 +240,11 @@ function convertTime() {
         </div>
 
         <div style="
-            font-size:24px;
+            font-size:26px;
             font-weight:700;
             color:#4361ee;
         ">
-            ${converted.toFormat(
-                "cccc, dd LLL yyyy"
-            )}
+            ${converted.toFormat("cccc, dd LLL yyyy")}
         </div>
 
         <div style="
@@ -250,9 +252,7 @@ function convertTime() {
             font-size:22px;
             font-weight:600;
         ">
-            ${converted.toFormat(
-                "hh:mm a"
-            )}
+            ${converted.toFormat("hh:mm a")}
         </div>
 
         <div style="
@@ -262,19 +262,8 @@ function convertTime() {
         ">
             GMT${converted.toFormat("ZZ")}
         </div>
-        `;
-
-    } catch (err) {
-
-        console.error(err);
-
-        document.getElementById("result").innerHTML =
-            `<div style="color:red">
-                Conversion failed
-             </div>`;
-    }
+    `;
 }
-
 /* ---------------------------
    ENTER KEY
 ---------------------------- */
