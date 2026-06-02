@@ -206,3 +206,69 @@ button{
 .flag{
     font-size:20px;
 }
+
+/* =========================
+   GEO SEARCH DROPDOWN
+========================= */
+
+.select2-results__option {
+    padding: 0 !important;
+}
+
+.location-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 12px 14px;
+
+    transition: .2s;
+}
+
+.location-item:hover {
+    background: #f5f7ff;
+}
+
+.location-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.city {
+    font-size: 15px;
+    font-weight: 600;
+    color: #4361ee;
+}
+
+.country {
+    margin-top: 3px;
+    font-size: 12px;
+    color: #777;
+}
+
+.flag {
+    font-size: 24px;
+}
+
+.select2-selection__rendered {
+    font-weight: 600 !important;
+}
+
+.select2-container--default
+.select2-results__option--highlighted {
+    background: #eef2ff !important;
+    color: inherit !important;
+}
+
+/* nicer flatpickr */
+
+.flatpickr-calendar {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,.15);
+}
+
+.flatpickr-day.selected {
+    background: #667eea !important;
+    border-color: #667eea !important;
+}
