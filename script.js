@@ -1,11 +1,5 @@
-const timezones = [
-  "Asia/Kolkata",
-  "America/New_York",
-  "Europe/London",
-  "Asia/Tokyo",
-  "Australia/Sydney",
-  "America/Los_Angeles"
-];
+const timezones =
+  Intl.supportedValuesOf('timeZone');
 
 const fromSelect = document.getElementById("fromTimezone");
 const toSelect = document.getElementById("toTimezone");
