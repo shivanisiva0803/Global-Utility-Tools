@@ -7,33 +7,39 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- ✅ Tom Select (searchable dropdown) -->
+  <!-- Tom Select -->
   <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
 </head>
 
 <body>
 
-  <div class="container">
-    <h1>Timezone Converter</h1>
+<div class="container">
 
-    <label>Enter Time</label>
-    <input type="datetime-local" id="timeInput">
+  <h1>🌍 Timezone Converter</h1>
 
-    <label>From Timezone</label>
-    <select id="fromTimezone"></select>
+  <label>Enter Time</label>
+  <input type="datetime-local" id="timeInput">
 
-    <label>To Timezone</label>
-    <select id="toTimezone"></select>
+  <button class="small-btn" onclick="setNow()">Use Current Time</button>
 
-    <button onclick="convertTime()">Convert</button>
+  <label>From Timezone</label>
+  <select id="fromTimezone"></select>
 
-    <div id="result"></div>
-  </div>
+  <label>To Timezone</label>
+  <select id="toTimezone"></select>
 
-  <!-- ✅ Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+  <button class="swap-btn" onclick="swapTimezones()">⇄ Swap</button>
 
-  <script src="script.js?v=2"></script>
+  <button onclick="convertTime()">Convert</button>
+
+  <div id="currentTime"></div>
+  <div id="result"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script src="script.js?v=3"></script>
+
 </body>
 </html>
