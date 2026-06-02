@@ -1,52 +1,51 @@
-const timezones =
-  Intl.supportedValuesOf('timeZone');
+const fromTZ = document.getElementById("fromTimezone");
+const toTZ = document.getElementById("toTimezone");
 
-const fromSelect = document.getElementById("fromTimezone");
-const toSelect = document.getElementById("toTimezone");
+// ✅ Get ALL supported timezones
+const timezones = Intl.supportedValuesOf("timeZone");
 
+// Populate dropdowns
 timezones.forEach(tz => {
-
   const option1 = document.createElement("option");
   option1.value = tz;
   option1.textContent = tz;
-  fromSelect.appendChild(option1);
+  fromTZ.appendChild(option1);
 
   const option2 = document.createElement("option");
   option2.value = tz;
   option2.textContent = tz;
-  toSelect.appendChild(option2);
-
+  toTZ.appendChild(option2);
 });
 
-fromSelect.value = "Asia/Kolkata";
-toSelect.value = "America/New_York";
+// Default selections
+fromTZ.value = "Asia/Kolkata";
+toTZ.value = "America/New_York";
 
+// Convert function
 function convertTime() {
-
-  const inputTime =
-    document.getElementById("timeInput").value;
-
-  const fromTZ = fromSelect.value;
-  const toTZ = toSelect.value;
+  const inputTime = document.getElementById("timeInput").value;
+  const from = fromTZ.value;
+  const to = document.getElementById("toTimezone").value;
 
   if (!inputTime) {
-    alert("Please select time");
+    alert("Please select a time");
     return;
   }
 
-  const dateTime =
-    luxon.DateTime
-      .fromISO(inputTime, { zone: fromTZ });
+  const date = new Date(inputTime);
 
-  const converted =
-    dateTime
-      .setZone(toTZ)
-      .toFormat("ffff");
+  const options = {
+    timeZone: to,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
 
-  document.getElementById("result").innerHTML =
-    `
-      Converted Time:
-      <br><br>
-      ${converted}
-    `;
+  const converted = new Intl.DateTimeFormat([], options).format(date);
+
+  document.getElementById("result").innerText =
+    `Converted Time (${to}): ${converted}`;
 }
