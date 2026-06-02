@@ -4,60 +4,84 @@ body {
   margin: 0;
 }
 
+/* Card container */
 .container {
   width: 420px;
   margin: 60px auto;
   background: white;
   padding: 30px;
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Spacing between all elements */
+.container > * {
+  margin-bottom: 14px;
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  font-weight: 600;
 }
 
+/* Labels */
 label {
   font-weight: 600;
-  display: block;
-  margin-top: 10px;
+  font-size: 14px;
 }
 
+/* Inputs */
 input, select {
   width: 100%;
   padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
+  font-size: 14px;
 }
 
+/* Primary button */
 button {
   width: 100%;
   padding: 12px;
   border: none;
   background: #667eea;
   color: white;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 15px;
   cursor: pointer;
-  transition: 0.3s;
-  margin-top: 8px;
+  transition: all 0.25s ease;
 }
 
+/* Hover effect */
 button:hover {
   background: #5a67d8;
+  transform: translateY(-1px);
 }
 
+/* Secondary buttons */
 .small-btn {
-  background: #444;
+  background: #4a5568;
+}
+
+.small-btn:hover {
+  background: #2d3748;
 }
 
 .swap-btn {
-  background: #333;
+  background: #2d3748;
 }
 
+.swap-btn:hover {
+  background: #1a202c;
+}
+
+/* Space between stacked buttons */
+button + button {
+  margin-top: 10px;
+}
+
+/* Result UI */
 #result {
   margin-top: 15px;
   padding: 12px;
@@ -67,18 +91,25 @@ button:hover {
   font-size: 16px;
 }
 
+/* Current time */
 #currentTime {
-  margin-top: 10px;
   font-size: 13px;
   text-align: center;
   color: #555;
 }
 
-/* Tom Select */
+/* ✅ Tom Select fixes */
 .ts-control {
   border-radius: 8px !important;
+  padding: 8px !important;
+}
+
+.ts-dropdown {
+  border-radius: 8px;
 }
 
 .ts-dropdown .option {
   padding: 10px;
+  display: flex;
+  gap: 6px;
 }
