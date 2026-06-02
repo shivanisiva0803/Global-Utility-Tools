@@ -1,31 +1,49 @@
-const timezones =
-  Intl.supportedValuesOf('timeZone');
+const timezones = Intl.supportedValuesOf('timeZone');
 
 const fromSelect = document.getElementById("fromTimezone");
 const toSelect = document.getElementById("toTimezone");
 
+// 🌍 Add flag-like emoji by region
+function getFlag(tz) {
+  if (tz.startsWith("Asia")) return "🌏";
+  if (tz.startsWith("Europe")) return "🇪🇺";
+  if (tz.startsWith("America")) return "🌎";
+  if (tz.startsWith("Africa")) return "🌍";
+  if (tz.startsWith("Australia")) return "🇦🇺";
+  return "🌐";
+}
+
+// ✅ Populate dropdown
 timezones.forEach(tz => {
+  const label = `${getFlag(tz)} ${tz}`;
 
-  const option1 = document.createElement("option");
-  option1.value = tz;
-  option1.textContent = tz;
-  fromSelect.appendChild(option1);
+  const opt1 = new Option(label, tz);
+  const opt2 = new Option(label, tz);
 
-  const option2 = document.createElement("option");
-  option2.value = tz;
-  option2.textContent = tz;
-  toSelect.appendChild(option2);
-
+  fromSelect.add(opt1);
+  toSelect.add(opt2);
 });
 
-fromSelect.value = "Asia/Kolkata";
+// ✅ Auto-detect user timezone
+const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+fromSelect.value = userTZ || "Asia/Kolkata";
 toSelect.value = "America/New_York";
 
+// ✅ Convert selects to searchable dropdowns
+new TomSelect("#fromTimezone", {
+  create: false,
+  sortField: { field: "text", direction: "asc" }
+});
+
+new TomSelect("#toTimezone", {
+  create: false,
+  sortField: { field: "text", direction: "asc" }
+});
+
+// ✅ Conversion function (Luxon)
 function convertTime() {
-
-  const inputTime =
-    document.getElementById("timeInput").value;
-
+  const inputTime = document.getElementById("timeInput").value;
   const fromTZ = fromSelect.value;
   const toTZ = toSelect.value;
 
@@ -34,19 +52,16 @@ function convertTime() {
     return;
   }
 
-  const dateTime =
-    luxon.DateTime
-      .fromISO(inputTime, { zone: fromTZ });
+  const dateTime = luxon.DateTime.fromISO(inputTime, {
+    zone: fromTZ
+  });
 
-  const converted =
-    dateTime
-      .setZone(toTZ)
-      .toFormat("ffff");
+  const converted = dateTime
+    .setZone(toTZ)
+    .toFormat("cccc, dd LLL yyyy, hh:mm a");
 
-  document.getElementById("result").innerHTML =
-    `
-      Converted Time:
-      <br><br>
-      ${converted}
-    `;
+  document.getElementById("result").innerHTML = `
+    Converted Time:<br><br>
+    ${converted}
+  `;
 }
