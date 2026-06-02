@@ -58,3 +58,29 @@ button:hover {
   text-align: center;
   color: #222;
 }
+
+/* Improve searchable dropdown */
+.ts-control {
+  border-radius: 8px !important;
+  padding: 8px !important;
+}
+
+.ts-dropdown {
+  border-radius: 8px;
+}
+
+.ts-dropdown .option {
+  padding: 10px;
+}
+
+/* Optional: better result box */
+#result {
+  margin-top: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: #222;
+  background: #f7f7f7;
+  padding: 12px;
+  border-radius: 8px;
+}
+
