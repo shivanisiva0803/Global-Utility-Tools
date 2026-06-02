@@ -1,133 +1,163 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #667eea, #764ba2);
-  margin: 0;
-  transition: background 0.3s;
+*{
+  box-sizing:border-box;
 }
 
-/* Dark mode */
-body.dark {
-  background: #121212;
+body{
+  margin:0;
+  padding:30px;
+
+  font-family:'Segoe UI',sans-serif;
+
+  background:
+  linear-gradient(
+      135deg,
+      #667eea,
+      #764ba2
+  );
+
+  min-height:100vh;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-/* Card */
-.container {
-  width: 420px;
-  margin: 60px auto;
-  background: white;
-  padding: 28px;
-  border-radius: 16px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-  transition: all 0.3s;
+.container{
+  width:100%;
+  max-width:650px;
+
+  background:white;
+
+  border-radius:24px;
+
+  padding:35px;
+
+  box-shadow:
+  0 25px 60px rgba(0,0,0,.15);
 }
 
-body.dark .container {
-  background: #1e1e1e;
-  color: #eee;
+.header{
+  text-align:center;
+  margin-bottom:25px;
 }
 
-/* Title */
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-weight: 600;
+.header h1{
+  margin:0;
+  font-size:38px;
 }
 
-/* Form spacing */
-.form-group {
-  margin-bottom: 14px;
+.header p{
+  margin-top:10px;
+  color:#777;
 }
 
-label {
-  font-size: 14px;
-  font-weight: 600;
+.form-group{
+  margin-bottom:20px;
 }
 
-/* Inputs */
-input, select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:600;
 }
 
-body.dark input,
-body.dark select {
-  background: #2a2a2a;
-  border: 1px solid #444;
-  color: white;
+input{
+  width:100%;
 }
 
-/* Button row */
-.button-row {
-  display: flex;
-  gap: 10px;
+#timeInput{
+  height:52px;
+  border-radius:12px;
+  border:1px solid #dcdcdc;
+  padding:12px;
 }
 
-/* Buttons */
-button {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: #667eea;
-  color: white;
-  cursor: pointer;
-  transition: 0.25s;
+.button-row{
+  display:flex;
+  gap:12px;
+  margin-bottom:20px;
 }
 
-button:hover {
-  transform: translateY(-1px);
-  background: #5a67d8;
+button{
+  border:none;
+  cursor:pointer;
+  border-radius:12px;
+  height:50px;
+  font-weight:600;
 }
 
-/* Secondary buttons */
-.secondary {
-  background: #4a5568;
+.secondary{
+  flex:1;
+  background:#edf2f7;
 }
 
-.secondary:hover {
-  background: #2d3748;
+.convert-btn{
+  width:100%;
+  color:white;
+
+  background:
+  linear-gradient(
+      135deg,
+      #667eea,
+      #764ba2
+  );
 }
 
-/* Result box */
-#result {
-  margin-top: 15px;
-  padding: 14px;
-  border-radius: 10px;
-  background: #f5f5f5;
-  text-align: center;
+.convert-btn:hover{
+  opacity:.95;
 }
 
-body.dark #result {
-  background: #2a2a2a;
+#currentTime{
+  margin-top:15px;
+  text-align:center;
+  color:#666;
 }
 
-/* Current time */
-#currentTime {
-  text-align: center;
-  font-size: 13px;
-  color: #666;
+#result{
+  margin-top:20px;
+  padding:20px;
+
+  border-radius:18px;
+
+  background:#f7f9ff;
+
+  text-align:center;
 }
 
-body.dark #currentTime {
-  color: #aaa;
+/* Select2 */
+
+.select2-container{
+  width:100% !important;
 }
 
-/* Dropdown fix */
-.ts-control {
-  border-radius: 8px !important;
+.select2-selection{
+  height:52px !important;
+  border-radius:12px !important;
+  border:1px solid #dcdcdc !important;
 }
 
-/* Mobile */
-@media (max-width: 500px) {
-  .container {
-    width: 90%;
-    margin: 30px auto;
-  }
+.select2-selection__rendered{
+  line-height:50px !important;
+}
 
-  .button-row {
-    flex-direction: column;
-  }
+.select2-selection__arrow{
+  height:50px !important;
+}
+
+.select2-dropdown{
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.select2-results__options{
+  max-height:300px !important;
+}
+
+.location-title{
+  font-weight:600;
+}
+
+.location-sub{
+  color:#777;
+  font-size:12px;
 }
