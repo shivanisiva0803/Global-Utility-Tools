@@ -1,163 +1,208 @@
 *{
-  box-sizing:border-box;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 body{
-  margin:0;
-  padding:30px;
+    font-family:'Segoe UI',sans-serif;
 
-  font-family:'Segoe UI',sans-serif;
+    background:
+        linear-gradient(
+            135deg,
+            #667eea,
+            #764ba2
+        );
 
-  background:
-  linear-gradient(
-      135deg,
-      #667eea,
-      #764ba2
-  );
+    min-height:100vh;
 
-  min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-  display:flex;
-  justify-content:center;
-  align-items:center;
+    padding:30px;
 }
 
 .container{
-  width:100%;
-  max-width:650px;
+    width:100%;
+    max-width:650px;
 
-  background:white;
+    background:white;
 
-  border-radius:24px;
+    border-radius:24px;
 
-  padding:35px;
+    padding:35px;
 
-  box-shadow:
-  0 25px 60px rgba(0,0,0,.15);
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.15);
 }
 
 .header{
-  text-align:center;
-  margin-bottom:25px;
+    text-align:center;
+    margin-bottom:25px;
 }
 
 .header h1{
-  margin:0;
-  font-size:38px;
+    font-size:36px;
+    margin-bottom:10px;
 }
 
 .header p{
-  margin-top:10px;
-  color:#777;
+    color:#777;
 }
 
 .form-group{
-  margin-bottom:20px;
+    margin-bottom:20px;
 }
 
 label{
-  display:block;
-  margin-bottom:8px;
-  font-weight:600;
-}
-
-input{
-  width:100%;
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
 }
 
 #timeInput{
-  height:52px;
-  border-radius:12px;
-  border:1px solid #dcdcdc;
-  padding:12px;
+    width:100%;
+    height:52px;
+
+    border:1px solid #ddd;
+    border-radius:12px;
+
+    padding:12px;
 }
 
 .button-row{
-  display:flex;
-  gap:12px;
-  margin-bottom:20px;
+    display:flex;
+    gap:12px;
+    margin-bottom:20px;
 }
 
 button{
-  border:none;
-  cursor:pointer;
-  border-radius:12px;
-  height:50px;
-  font-weight:600;
+    border:none;
+    cursor:pointer;
+
+    border-radius:12px;
+
+    height:50px;
+
+    font-weight:600;
 }
 
 .secondary{
-  flex:1;
-  background:#edf2f7;
+    flex:1;
+    background:#edf2f7;
+}
+
+.secondary:hover{
+    background:#dfe6ee;
 }
 
 .convert-btn{
-  width:100%;
-  color:white;
+    width:100%;
+    color:white;
 
-  background:
-  linear-gradient(
-      135deg,
-      #667eea,
-      #764ba2
-  );
+    background:
+        linear-gradient(
+            135deg,
+            #667eea,
+            #764ba2
+        );
 }
 
 .convert-btn:hover{
-  opacity:.95;
+    opacity:.95;
 }
 
 #currentTime{
-  margin-top:15px;
-  text-align:center;
-  color:#666;
+    margin-top:18px;
+    text-align:center;
+    color:#666;
 }
 
 #result{
-  margin-top:20px;
-  padding:20px;
+    margin-top:20px;
 
-  border-radius:18px;
+    background:#f7f9ff;
 
-  background:#f7f9ff;
+    border-radius:18px;
 
-  text-align:center;
+    padding:22px;
+
+    text-align:center;
 }
 
-/* Select2 */
+/* SELECT2 */
 
 .select2-container{
-  width:100% !important;
+    width:100%!important;
 }
 
 .select2-selection{
-  height:52px !important;
-  border-radius:12px !important;
-  border:1px solid #dcdcdc !important;
+    min-height:52px!important;
+    border-radius:12px!important;
+    border:1px solid #ddd!important;
 }
 
 .select2-selection__rendered{
-  line-height:50px !important;
+    line-height:50px!important;
 }
 
 .select2-selection__arrow{
-  height:50px !important;
+    height:50px!important;
 }
 
 .select2-dropdown{
-  border-radius:12px;
-  overflow:hidden;
+    border-radius:12px;
+    overflow:hidden;
+
+    border:1px solid #ddd;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.15);
+}
+
+.select2-search__field{
+    height:40px!important;
+    border-radius:8px!important;
 }
 
 .select2-results__options{
-  max-height:300px !important;
+    max-height:350px!important;
 }
 
-.location-title{
-  font-weight:600;
+.select2-results__option--highlighted{
+    background:#667eea!important;
 }
 
-.location-sub{
-  color:#777;
-  font-size:12px;
+/* DROPDOWN ITEM */
+
+.location-item{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:8px;
+}
+
+.location-left{
+    display:flex;
+    flex-direction:column;
+}
+
+.city{
+    font-size:15px;
+    font-weight:600;
+    color:#4361ee;
+}
+
+.country{
+    font-size:12px;
+    color:#777;
+    margin-top:4px;
+}
+
+.flag{
+    font-size:20px;
 }
