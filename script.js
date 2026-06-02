@@ -134,79 +134,86 @@ function swapTimezones() {
 
 function convertTime() {
 
-    if (!fp.selectedDates.length) {
+    const fromTZRaw = $("#fromTimezone").val();
+    const toTZRaw = $("#toTimezone").val();
+
+    // Normalize aliases
+    const aliasMap = {
+        "Asia/Calcutta": "Asia/Kolkata"
+    };
+
+    const fromTZ = aliasMap[fromTZRaw] || fromTZRaw;
+    const toTZ = aliasMap[toTZRaw] || toTZRaw;
+
+    if (!fp || !fp.selectedDates.length) {
+        document.getElementById("result").innerHTML =
+            "Please select a date and time";
         return;
     }
 
-    const fromTZ =
-        $("#fromTimezone").val();
+    const d = fp.selectedDates[0];
 
-    const toTZ =
-        $("#toTimezone").val();
-
-    const jsDate =
-        fp.selectedDates[0];
-
-    const localDateTime =
-        DateTime.fromObject({
-            year: jsDate.getFullYear(),
-            month: jsDate.getMonth() + 1,
-            day: jsDate.getDate(),
-            hour: jsDate.getHours(),
-            minute: jsDate.getMinutes()
-        }, {
+    const source = luxon.DateTime.fromObject(
+        {
+            year: d.getFullYear(),
+            month: d.getMonth() + 1,
+            day: d.getDate(),
+            hour: d.getHours(),
+            minute: d.getMinutes()
+        },
+        {
             zone: fromTZ
-        });
+        }
+    );
 
-    if (!localDateTime.isValid) {
+    if (!source.isValid) {
 
-        document.getElementById("result")
-            .innerHTML =
-            "Invalid source timezone";
+        document.getElementById("result").innerHTML = `
+            <div style="color:red">
+                Source invalid<br>
+                Reason: ${source.invalidReason}<br>
+                ${source.invalidExplanation || ""}
+            </div>
+        `;
 
+        console.log("SOURCE", source);
         return;
     }
 
-    const converted =
-        localDateTime.setZone(toTZ);
+    const converted = source.setZone(toTZ);
 
-    document.getElementById("result")
-        .innerHTML = `
+    if (!converted.isValid) {
 
-        <div style="
-            color:#777;
-            margin-bottom:10px;
-            font-size:13px;
-        ">
+        document.getElementById("result").innerHTML = `
+            <div style="color:red">
+                Target invalid<br>
+                Reason: ${converted.invalidReason}<br>
+                ${converted.invalidExplanation || ""}
+            </div>
+        `;
+
+        console.log("TARGET", converted);
+        return;
+    }
+
+    document.getElementById("result").innerHTML = `
+        <div style="color:#777">
             ${fromTZ} → ${toTZ}
         </div>
 
         <div style="
-            font-size:26px;
-            font-weight:700;
-            color:#4361ee;
+            font-size:28px;
+            font-weight:bold;
+            margin-top:10px;
         ">
-            ${converted.toFormat(
-                "cccc, dd LLL yyyy"
-            )}
+            ${converted.toFormat("cccc, dd LLL yyyy")}
         </div>
 
         <div style="
-            margin-top:10px;
             font-size:22px;
-            font-weight:600;
+            margin-top:8px;
         ">
-            ${converted.toFormat(
-                "hh:mm a"
-            )}
-        </div>
-
-        <div style="
-            margin-top:10px;
-            color:#666;
-            font-size:13px;
-        ">
-            GMT${converted.toFormat("ZZ")}
+            ${converted.toFormat("hh:mm a")}
         </div>
     `;
 }
