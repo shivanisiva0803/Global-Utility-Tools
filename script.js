@@ -1,51 +1,52 @@
-const fromTZ = document.getElementById("fromTimezone");
-const toTZ = document.getElementById("toTimezone");
+const timezones =
+  Intl.supportedValuesOf('timeZone');
 
-// ✅ Get ALL supported timezones
-const timezones = Intl.supportedValuesOf("timeZone");
+const fromSelect = document.getElementById("fromTimezone");
+const toSelect = document.getElementById("toTimezone");
 
-// Populate dropdowns
 timezones.forEach(tz => {
+
   const option1 = document.createElement("option");
   option1.value = tz;
   option1.textContent = tz;
-  fromTZ.appendChild(option1);
+  fromSelect.appendChild(option1);
 
   const option2 = document.createElement("option");
   option2.value = tz;
   option2.textContent = tz;
-  toTZ.appendChild(option2);
+  toSelect.appendChild(option2);
+
 });
 
-// Default selections
-fromTZ.value = "Asia/Kolkata";
-toTZ.value = "America/New_York";
+fromSelect.value = "Asia/Kolkata";
+toSelect.value = "America/New_York";
 
-// Convert function
 function convertTime() {
-  const inputTime = document.getElementById("timeInput").value;
-  const from = fromTZ.value;
-  const to = document.getElementById("toTimezone").value;
+
+  const inputTime =
+    document.getElementById("timeInput").value;
+
+  const fromTZ = fromSelect.value;
+  const toTZ = toSelect.value;
 
   if (!inputTime) {
-    alert("Please select a time");
+    alert("Please select time");
     return;
   }
 
-  const date = new Date(inputTime);
+  const dateTime =
+    luxon.DateTime
+      .fromISO(inputTime, { zone: fromTZ });
 
-  const options = {
-    timeZone: to,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  };
+  const converted =
+    dateTime
+      .setZone(toTZ)
+      .toFormat("ffff");
 
-  const converted = new Intl.DateTimeFormat([], options).format(date);
-
-  document.getElementById("result").innerText =
-    `Converted Time (${to}): ${converted}`;
+  document.getElementById("result").innerHTML =
+    `
+      Converted Time:
+      <br><br>
+      ${converted}
+    `;
 }
