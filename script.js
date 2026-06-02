@@ -1,89 +1,28 @@
 const DateTime = luxon.DateTime;
 
 let fp;
-
 const GEO_USERNAME = "sathwi";
 
-/* ==========================
+/* =========================
    POPULAR CITIES
-========================== */
+========================= */
 
 const popularCities = [
-
-    {
-        city: "Hyderabad",
-        country: "India",
-        countryCode: "IN",
-        timezone: "Asia/Kolkata"
-    },
-
-    {
-        city: "Mumbai",
-        country: "India",
-        countryCode: "IN",
-        timezone: "Asia/Kolkata"
-    },
-
-    {
-        city: "Delhi",
-        country: "India",
-        countryCode: "IN",
-        timezone: "Asia/Kolkata"
-    },
-
-    {
-        city: "London",
-        country: "United Kingdom",
-        countryCode: "GB",
-        timezone: "Europe/London"
-    },
-
-    {
-        city: "New York",
-        country: "United States",
-        countryCode: "US",
-        timezone: "America/New_York"
-    },
-
-    {
-        city: "Chicago",
-        country: "United States",
-        countryCode: "US",
-        timezone: "America/Chicago"
-    },
-
-    {
-        city: "Los Angeles",
-        country: "United States",
-        countryCode: "US",
-        timezone: "America/Los_Angeles"
-    },
-
-    {
-        city: "Sydney",
-        country: "Australia",
-        countryCode: "AU",
-        timezone: "Australia/Sydney"
-    },
-
-    {
-        city: "Tokyo",
-        country: "Japan",
-        countryCode: "JP",
-        timezone: "Asia/Tokyo"
-    },
-
-    {
-        city: "Dubai",
-        country: "United Arab Emirates",
-        countryCode: "AE",
-        timezone: "Asia/Dubai"
-    }
+    { city: "Hyderabad", country: "India", countryCode: "IN", timezone: "Asia/Kolkata" },
+    { city: "Mumbai", country: "India", countryCode: "IN", timezone: "Asia/Kolkata" },
+    { city: "Delhi", country: "India", countryCode: "IN", timezone: "Asia/Kolkata" },
+    { city: "New York", country: "United States", countryCode: "US", timezone: "America/New_York" },
+    { city: "Chicago", country: "United States", countryCode: "US", timezone: "America/Chicago" },
+    { city: "Dallas", country: "United States", countryCode: "US", timezone: "America/Chicago" },
+    { city: "London", country: "United Kingdom", countryCode: "GB", timezone: "Europe/London" },
+    { city: "Paris", country: "France", countryCode: "FR", timezone: "Europe/Paris" },
+    { city: "Tokyo", country: "Japan", countryCode: "JP", timezone: "Asia/Tokyo" },
+    { city: "Sydney", country: "Australia", countryCode: "AU", timezone: "Australia/Sydney" }
 ];
 
-/* ==========================
+/* =========================
    INIT
-========================== */
+========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -94,23 +33,32 @@ document.addEventListener("DOMContentLoaded", () => {
         defaultDate: new Date()
     });
 
-    initDropdown("#fromTimezone");
-    initDropdown("#toTimezone");
+    initSelect("#fromTimezone");
+    initSelect("#toTimezone");
 
     setTimeout(() => {
 
-        selectDefaultValues();
+        $("#fromTimezone")
+            .val("Asia/Kolkata")
+            .trigger("change");
 
+        $("#toTimezone")
+            .val("America/New_York")
+            .trigger("change");
+
+        updateCurrentTime();
         convertTime();
 
-    }, 500);
+    }, 300);
 });
 
-/* ==========================
+/* =========================
    FLAGS
-========================== */
+========================= */
 
 function flagEmoji(code) {
+
+    if (!code) return "🌍";
 
     return code
         .toUpperCase()
@@ -121,9 +69,9 @@ function flagEmoji(code) {
         );
 }
 
-/* ==========================
+/* =========================
    TEMPLATE
-========================== */
+========================= */
 
 function renderLocation(item) {
 
@@ -160,25 +108,19 @@ function renderSelection(item) {
     `;
 }
 
-/* ==========================
-   DROPDOWN
-========================== */
+/* =========================
+   SELECT2
+========================= */
 
-function initDropdown(selector) {
+function initSelect(selector) {
 
     const localData = popularCities.map(x => ({
-
         id: x.timezone,
-
+        text: x.city,
         city: x.city,
-
         country: x.country,
-
         countryCode: x.countryCode,
-
-        timezone: x.timezone,
-
-        text: x.city
+        timezone: x.timezone
     }));
 
     $(selector).select2({
@@ -186,8 +128,6 @@ function initDropdown(selector) {
         width: "100%",
 
         data: localData,
-
-        minimumInputLength: 0,
 
         templateResult: renderLocation,
 
@@ -199,151 +139,106 @@ function initDropdown(selector) {
 
             delay: 300,
 
-            transport: function(params, success, failure) {
+            transport: async function(params, success, failure) {
 
-                const term =
-                    params.data.term;
+                const term = params.data.term;
 
                 if (!term || term.length < 2) {
-
-                    success({
-                        results: []
-                    });
-
+                    success({ results: [] });
                     return;
                 }
 
-                fetch(
-                    `https://secure.geonames.org/searchJSON?q=${encodeURIComponent(term)}&maxRows=15&featureClass=P&orderby=population&username=${GEO_USERNAME}`
-                )
-                .then(r => r.json())
-                .then(data => {
+                try {
 
-                    const results =
-                        data.geonames.map(x => ({
+                    const response = await fetch(
+                        `https://secure.geonames.org/searchJSON?q=${encodeURIComponent(term)}&maxRows=15&featureClass=P&orderby=population&username=${GEO_USERNAME}`
+                    );
 
-                            id:
-                                `${x.lat}_${x.lng}`,
-
-                            city:
-                                x.name,
-
-                            country:
-                                x.countryName,
-
-                            countryCode:
-                                x.countryCode,
-
-                            lat:
-                                x.lat,
-
-                            lng:
-                                x.lng,
-
-                            text:
-                                x.name
-                        }));
+                    const data = await response.json();
 
                     success({
-                        results
+                        results: data.geonames.map(city => ({
+                            id: city.geonameId,
+                            city: city.name,
+                            country: city.countryName,
+                            countryCode: city.countryCode,
+                            lat: city.lat,
+                            lng: city.lng,
+                            text: city.name
+                        }))
                     });
-                })
-                .catch(failure);
+
+                } catch (err) {
+                    failure(err);
+                }
             },
 
             processResults: data => data
         }
     });
 
-    $(selector).on(
-        "select2:select",
-        async function(e) {
+    $(selector).on("select2:select", async function(e) {
 
-            const item =
-                e.params.data;
+        const item = e.params.data;
 
-            if (!item.lat)
-                return;
+        if (!item.lat || !item.lng)
+            return;
 
-            try {
+        try {
 
-                const response =
-                    await fetch(
-                        `https://secure.geonames.org/timezoneJSON?lat=${item.lat}&lng=${item.lng}&username=${GEO_USERNAME}`
-                    );
+            const tzResponse = await fetch(
+                `https://secure.geonames.org/timezoneJSON?lat=${item.lat}&lng=${item.lng}&username=${GEO_USERNAME}`
+            );
 
-                const tz =
-                    await response.json();
+            const tzData = await tzResponse.json();
 
-                item.timezone =
-                    tz.timezoneId;
+            const timezone = tzData.timezoneId;
 
-                $(this)
-                    .data("timezone",
-                        tz.timezoneId
-                    );
+            const option = new Option(
+                item.city,
+                timezone,
+                true,
+                true
+            );
 
-            } catch {}
+            $(this)
+                .append(option)
+                .trigger("change");
+
+            updateCurrentTime();
+            convertTime();
+
+        } catch (error) {
+
+            console.error(
+                "Timezone lookup failed",
+                error
+            );
         }
-    );
+    });
 }
 
-/* ==========================
-   DEFAULTS
-========================== */
-
-function selectDefaultValues() {
-
-    $("#fromTimezone")
-        .val("Asia/Kolkata")
-        .trigger("change");
-
-    $("#toTimezone")
-        .val("America/New_York")
-        .trigger("change");
-
-    updateCurrentTime();
-}
-
-/* ==========================
-   GET TIMEZONE
-========================== */
-
-function getTimezone(selector) {
-
-    const selected =
-        $(selector)
-        .select2("data")[0];
-
-    if (!selected)
-        return "UTC";
-
-    return (
-        selected.timezone ||
-        selected.id ||
-        "UTC"
-    );
-}
-
-/* ==========================
+/* =========================
    CURRENT TIME
-========================== */
+========================= */
 
 function updateCurrentTime() {
 
     const zone =
-        getTimezone("#fromTimezone");
+        $("#fromTimezone").val();
+
+    if (!zone) return;
 
     const now =
         DateTime.now()
-        .setZone(zone)
-        .toFormat(
-            "cccc, dd LLL yyyy, hh:mm a"
-        );
+            .setZone(zone)
+            .toFormat(
+                "cccc, dd LLL yyyy, hh:mm a"
+            );
 
-    document
-        .getElementById("currentTime")
-        .innerHTML =
+    document.getElementById(
+        "currentTime"
+    ).innerHTML =
         `Current time: ${now}`;
 }
 
@@ -352,9 +247,9 @@ $("#fromTimezone").on(
     updateCurrentTime
 );
 
-/* ==========================
+/* =========================
    NOW
-========================== */
+========================= */
 
 function setNow() {
 
@@ -366,9 +261,9 @@ function setNow() {
     convertTime();
 }
 
-/* ==========================
+/* =========================
    SWAP
-========================== */
+========================= */
 
 function swapTimezones() {
 
@@ -389,9 +284,9 @@ function swapTimezones() {
     convertTime();
 }
 
-/* ==========================
+/* =========================
    CONVERT
-========================== */
+========================= */
 
 function convertTime() {
 
@@ -399,14 +294,13 @@ function convertTime() {
         return;
 
     const fromZone =
-        getTimezone(
-            "#fromTimezone"
-        );
+        $("#fromTimezone").val();
 
     const toZone =
-        getTimezone(
-            "#toTimezone"
-        );
+        $("#toTimezone").val();
+
+    if (!fromZone || !toZone)
+        return;
 
     const d =
         fp.selectedDates[0];
@@ -425,19 +319,31 @@ function convertTime() {
             }
         );
 
+    if (!source.isValid) {
+
+        document.getElementById("result")
+            .innerHTML =
+            "Invalid source timezone";
+
+        return;
+    }
+
     const converted =
         source.setZone(toZone);
 
-    document
-        .getElementById("result")
+    if (!converted.isValid) {
+
+        document.getElementById("result")
+            .innerHTML =
+            "Invalid target timezone";
+
+        return;
+    }
+
+    document.getElementById("result")
         .innerHTML = `
-            <div style="
-                color:#777;
-                font-size:13px;
-            ">
-                ${fromZone}
-                →
-                ${toZone}
+            <div style="color:#777;font-size:13px;">
+                ${fromZone} → ${toZone}
             </div>
 
             <div style="
@@ -459,18 +365,27 @@ function convertTime() {
                     "hh:mm a"
                 )}
             </div>
+
+            <div style="
+                margin-top:8px;
+                color:#777;
+                font-size:13px;
+            ">
+                GMT${converted.toFormat("ZZ")}
+            </div>
         `;
 }
 
-/* ==========================
+/* =========================
    ENTER
-========================== */
+========================= */
 
 document.addEventListener(
     "keydown",
     e => {
 
-        if (e.key === "Enter")
+        if (e.key === "Enter") {
             convertTime();
+        }
     }
 );
