@@ -3,22 +3,20 @@ const DateTime = luxon.DateTime;
 let fp;
 
 /* ---------------------------
-   FLATPICKR INIT
+   INIT
 ---------------------------- */
 
 document.addEventListener("DOMContentLoaded", () => {
 
     fp = flatpickr("#timeInput", {
         enableTime: true,
-        enableSeconds: false,
         time_24hr: false,
         allowInput: true,
         dateFormat: "Y-m-d H:i",
-        defaultDate: new Date(),
-        minuteIncrement: 1
+        defaultDate: new Date()
     });
 
-    initializeTimezones();
+    loadTimezones();
 
     setTimeout(() => {
         convertTime();
@@ -26,66 +24,41 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ---------------------------
-   TIMEZONE DATA
+   TIMEZONE LIST
 ---------------------------- */
 
-function initializeTimezones() {
+function loadTimezones() {
 
-    const timezones = [
+    let zones = [];
 
-        "Asia/Kolkata",
-        "Asia/Dubai",
-        "Asia/Singapore",
-        "Asia/Tokyo",
-
-        "Europe/London",
-        "Europe/Paris",
-        "Europe/Berlin",
-
-        "America/New_York",
-        "America/Chicago",
-        "America/Denver",
-        "America/Los_Angeles",
-
-        "Australia/Sydney",
-        "Australia/Melbourne",
-
-        "Africa/Cairo",
-        "Africa/Johannesburg",
-
-        "Pacific/Auckland"
-    ];
-
-    function getFlag(tz) {
-
-        if (tz.startsWith("Asia")) return "🌏";
-        if (tz.startsWith("Europe")) return "🇪🇺";
-        if (tz.startsWith("America")) return "🌎";
-        if (tz.startsWith("Africa")) return "🌍";
-        if (tz.startsWith("Australia")) return "🇦🇺";
-        if (tz.startsWith("Pacific")) return "🌊";
-
-        return "🌐";
+    try {
+        zones = Intl.supportedValuesOf("timeZone");
+    } catch {
+        zones = [
+            "Asia/Kolkata",
+            "Asia/Dubai",
+            "Asia/Tokyo",
+            "Europe/London",
+            "Europe/Paris",
+            "America/New_York",
+            "America/Chicago",
+            "America/Los_Angeles",
+            "Australia/Sydney"
+        ];
     }
 
-    const timezoneData = timezones.map(tz => ({
-
-        id: tz,
-
-        text:
-            `${getFlag(tz)} ${tz} (GMT${DateTime.now()
-                .setZone(tz)
-                .toFormat("ZZ")})`
-
+    const data = zones.map(z => ({
+        id: z,
+        text: z
     }));
 
     $("#fromTimezone").select2({
-        data: timezoneData,
+        data: data,
         width: "100%"
     });
 
     $("#toTimezone").select2({
-        data: timezoneData,
+        data: data,
         width: "100%"
     });
 
@@ -94,18 +67,9 @@ function initializeTimezones() {
             .resolvedOptions()
             .timeZone;
 
-    if (timezones.includes(userTZ)) {
-
-        $("#fromTimezone")
-            .val(userTZ)
-            .trigger("change");
-
-    } else {
-
-        $("#fromTimezone")
-            .val("Asia/Kolkata")
-            .trigger("change");
-    }
+    $("#fromTimezone")
+        .val(userTZ)
+        .trigger("change");
 
     $("#toTimezone")
         .val("America/New_York")
@@ -118,43 +82,30 @@ function initializeTimezones() {
 }
 
 /* ---------------------------
-   SET CURRENT TIME
----------------------------- */
-
-function setNow() {
-
-    if (fp) {
-
-        fp.setDate(
-            new Date(),
-            true
-        );
-    }
-
-    updateCurrentTime();
-}
-
-/* ---------------------------
-   CURRENT TIME DISPLAY
+   CURRENT TIME
 ---------------------------- */
 
 function updateCurrentTime() {
 
-    const tz =
-        $("#fromTimezone").val();
+    const tz = $("#fromTimezone").val();
 
-    if (!tz) return;
-
-    const now =
-        DateTime.now()
-            .setZone(tz)
-            .toFormat(
-                "cccc, dd LLL yyyy, hh:mm a"
-            );
+    const now = DateTime.now()
+        .setZone(tz)
+        .toFormat("cccc, dd LLL yyyy, hh:mm a");
 
     document.getElementById("currentTime")
-        .innerHTML =
-        `Current time: ${now}`;
+        .innerHTML = `Current time: ${now}`;
+}
+
+/* ---------------------------
+   SET NOW
+---------------------------- */
+
+function setNow() {
+
+    fp.setDate(new Date(), true);
+
+    convertTime();
 }
 
 /* ---------------------------
@@ -163,11 +114,8 @@ function updateCurrentTime() {
 
 function swapTimezones() {
 
-    const from =
-        $("#fromTimezone").val();
-
-    const to =
-        $("#toTimezone").val();
+    const from = $("#fromTimezone").val();
+    const to = $("#toTimezone").val();
 
     $("#fromTimezone")
         .val(to)
@@ -181,60 +129,54 @@ function swapTimezones() {
 }
 
 /* ---------------------------
-   CONVERT TIME
+   CONVERT
 ---------------------------- */
 
 function convertTime() {
 
-    const fromTZ = $("#fromTimezone").val();
-    const toTZ = $("#toTimezone").val();
-
-    if (!fp || !fp.selectedDates.length) {
-
-        alert("Please select date and time");
+    if (!fp.selectedDates.length) {
         return;
     }
 
-    // Get JS Date directly from Flatpickr
-    const selectedDate = fp.selectedDates[0];
+    const fromTZ =
+        $("#fromTimezone").val();
 
-    // Create DateTime in source timezone
-    const sourceDate = luxon.DateTime
-        .fromJSDate(selectedDate)
-        .setZone(fromTZ, {
-            keepLocalTime: true
+    const toTZ =
+        $("#toTimezone").val();
+
+    const jsDate =
+        fp.selectedDates[0];
+
+    const localDateTime =
+        DateTime.fromObject({
+            year: jsDate.getFullYear(),
+            month: jsDate.getMonth() + 1,
+            day: jsDate.getDate(),
+            hour: jsDate.getHours(),
+            minute: jsDate.getMinutes()
+        }, {
+            zone: fromTZ
         });
 
-    if (!sourceDate.isValid) {
+    if (!localDateTime.isValid) {
 
-        console.log(sourceDate.invalidReason);
-        console.log(sourceDate.invalidExplanation);
-
-        document.getElementById("result").innerHTML =
+        document.getElementById("result")
+            .innerHTML =
             "Invalid source timezone";
 
         return;
     }
 
     const converted =
-        sourceDate.setZone(toTZ);
+        localDateTime.setZone(toTZ);
 
-    if (!converted.isValid) {
+    document.getElementById("result")
+        .innerHTML = `
 
-        console.log(converted.invalidReason);
-        console.log(converted.invalidExplanation);
-
-        document.getElementById("result").innerHTML =
-            "Invalid target timezone";
-
-        return;
-    }
-
-    document.getElementById("result").innerHTML = `
         <div style="
             color:#777;
-            font-size:13px;
             margin-bottom:10px;
+            font-size:13px;
         ">
             ${fromTZ} → ${toTZ}
         </div>
@@ -244,15 +186,19 @@ function convertTime() {
             font-weight:700;
             color:#4361ee;
         ">
-            ${converted.toFormat("cccc, dd LLL yyyy")}
+            ${converted.toFormat(
+                "cccc, dd LLL yyyy"
+            )}
         </div>
 
         <div style="
-            margin-top:8px;
+            margin-top:10px;
             font-size:22px;
             font-weight:600;
         ">
-            ${converted.toFormat("hh:mm a")}
+            ${converted.toFormat(
+                "hh:mm a"
+            )}
         </div>
 
         <div style="
@@ -264,17 +210,14 @@ function convertTime() {
         </div>
     `;
 }
+
 /* ---------------------------
    ENTER KEY
 ---------------------------- */
 
-document.addEventListener(
-    "keydown",
-    function (e) {
+document.addEventListener("keydown", e => {
 
-        if (e.key === "Enter") {
-
-            convertTime();
-        }
+    if (e.key === "Enter") {
+        convertTime();
     }
-);
+});
