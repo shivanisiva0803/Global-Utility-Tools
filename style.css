@@ -272,3 +272,28 @@ button{
     background: #667eea !important;
     border-color: #667eea !important;
 }
+
+.result-route{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+    font-weight:600;
+    color:#555;
+    flex-wrap:wrap;
+}
+
+.result-city{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.result-city .flag{
+    font-size:22px;
+}
+
+.result-city .pin{
+    color:#4361ee;
+}
