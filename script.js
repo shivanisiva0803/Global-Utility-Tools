@@ -40,14 +40,14 @@ function convertTime() {
     return;
   }
 
-  const date = new Date(inputTime);
+  const dateTime =
+    luxon.DateTime
+      .fromISO(inputTime, { zone: fromTZ });
 
   const converted =
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: toTZ,
-      dateStyle: "full",
-      timeStyle: "long"
-    }).format(date);
+    dateTime
+      .setZone(toTZ)
+      .toFormat("ffff");
 
   document.getElementById("result").innerHTML =
     `
