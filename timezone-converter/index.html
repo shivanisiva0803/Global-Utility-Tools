@@ -1,1 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timezone Converter</title>
 
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <h1>Timezone Converter</h1>
+
+    <label>Enter Time</label>
+    <input type="datetime-local" id="timeInput">
+
+    <label>From Timezone</label>
+    <select id="fromTimezone"></select>
+
+    <label>To Timezone</label>
+    <select id="toTimezone"></select>
+
+    <button onclick="convertTime()">
+      Convert
+    </button>
+
+    <div id="result"></div>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
