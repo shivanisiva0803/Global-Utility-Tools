@@ -1,11 +1,11 @@
 const DateTime = luxon.DateTime;
 
-const timezones = Intl.supportedValuesOf('timeZone');
-
 const fromSelect = document.getElementById("fromTimezone");
 const toSelect = document.getElementById("toTimezone");
 
-/* ✅ Flag mapping */
+const timezones = Intl.supportedValuesOf("timeZone");
+
+/* ✅ Flag + offset */
 function getFlag(tz) {
   if (tz.startsWith("Asia")) return "🌏";
   if (tz.startsWith("Europe")) return "🇪🇺";
@@ -16,7 +16,6 @@ function getFlag(tz) {
   return "🌐";
 }
 
-/* ✅ GMT Offset */
 function getOffset(tz) {
   return DateTime.now().setZone(tz).toFormat("ZZ");
 }
@@ -29,93 +28,90 @@ timezones.forEach(tz => {
   toSelect.add(new Option(label, tz));
 });
 
-/* ✅ Auto detect user timezone */
+/* ✅ Auto-detect */
 const userTZ = DateTime.local().zoneName;
-
-fromSelect.value = userTZ || "Asia/Kolkata";
+fromSelect.value = userTZ;
 toSelect.value = "America/New_York";
 
-/* ✅ Searchable dropdown with FIXED behavior */
+/* ✅ Tom Select */
 const fromTS = new TomSelect("#fromTimezone", {
   create: false,
-  allowEmptyOption: true,
   selectOnTab: false,
   closeAfterSelect: true
 });
 
 const toTS = new TomSelect("#toTimezone", {
   create: false,
-  allowEmptyOption: true,
   selectOnTab: false,
   closeAfterSelect: true
 });
 
-/* ✅ Prevent unwanted auto-select */
+/* ✅ Fix unwanted selection */
 [fromTS, toTS].forEach(ts => {
-  ts.on('blur', () => {
-    ts.close();
-  });
+  ts.on("blur", () => ts.close());
 });
 
 /* ✅ Swap */
 function swapTimezones() {
   const temp = fromTS.getValue();
-
   fromTS.setValue(toTS.getValue());
   toTS.setValue(temp);
-
   updateCurrentTime();
 }
 
-/* ✅ Set current time */
-function setNow() {
-  const now = DateTime.now().toISO({
-    suppressSeconds: true,
-    includeOffset: false
-  });
-
-  document.getElementById("timeInput").value = now;
-}
-
-/* ✅ Live current time display */
+/* ✅ Current time */
 function updateCurrentTime() {
   const tz = fromSelect.value;
-
   const now = DateTime.now()
     .setZone(tz)
     .toFormat("cccc, dd LLL yyyy, hh:mm a");
 
   document.getElementById("currentTime").innerText =
-    `Current time in ${tz}: ${now}`;
+    `Current time: ${now}`;
 }
 
 fromSelect.addEventListener("change", updateCurrentTime);
 updateCurrentTime();
 
-/* ✅ Convert function */
-function convertTime() {
+/* ✅ Set now */
+function setNow() {
+  document.getElementById("timeInput").value = DateTime.now().toISO({
+    suppressSeconds: true,
+    includeOffset: false
+  });
+}
 
+/* ✅ Convert */
+function convertTime() {
   const input = document.getElementById("timeInput").value;
-  const fromTZ = fromSelect.value;
-  const toTZ = toSelect.value;
 
   if (!input) {
-    alert("Please select time");
+    alert("Select time");
     return;
   }
 
-  const date = DateTime.fromISO(input, { zone: fromTZ });
-
-  const result = date
-    .setZone(toTZ)
+  const result = DateTime.fromISO(input, {
+    zone: fromSelect.value
+  })
+    .setZone(toSelect.value)
     .toFormat("cccc, dd LLL yyyy, hh:mm a");
 
   document.getElementById("result").innerHTML = `
-    <div style="font-size:13px;color:#666">
-      ${fromTZ} → ${toTZ}
+    <div style="font-size:13px;color:#888">
+      ${fromSelect.value} → ${toSelect.value}
     </div>
-    <div style="margin-top:6px;font-size:18px;font-weight:bold;">
+    <div style="font-size:18px;margin-top:6px;font-weight:bold;">
       ${result}
     </div>
   `;
+}
+
+/* ✅ Enter key shortcut */
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter") convertTime();
+});
+
+/* ✅ Dark mode toggle */
+function toggleTheme() {
+  document.body.classList.toggle("dark");
 }
