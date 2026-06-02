@@ -6,11 +6,14 @@
   <title>Timezone Converter</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <!-- ✅ Tom Select (searchable dropdown) -->
+  <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
 </head>
+
 <body>
 
   <div class="container">
-
     <h1>Timezone Converter</h1>
 
     <label>Enter Time</label>
@@ -22,16 +25,15 @@
     <label>To Timezone</label>
     <select id="toTimezone"></select>
 
-    <button onclick="convertTime()">
-      Convert
-    </button>
+    <button onclick="convertTime()">Convert</button>
 
     <div id="result"></div>
-
   </div>
 
+  <!-- ✅ Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
-  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
+  <script src="script.js?v=2"></script>
 </body>
 </html>
