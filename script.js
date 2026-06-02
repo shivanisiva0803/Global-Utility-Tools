@@ -9,86 +9,85 @@ const GEO_USERNAME = "sathwi";
 ========================= */
 
 const popularCities = [
-    ["Hyderabad", "India", "IN", "Asia/Kolkata"],
-    ["Mumbai", "India", "IN", "Asia/Kolkata"],
-    ["Delhi", "India", "IN", "Asia/Kolkata"],
-    ["New York", "United States", "US", "America/New_York"],
-    ["Dallas", "United States", "US", "America/Chicago"],
-    ["Chicago", "United States", "US", "America/Chicago"],
-    ["Los Angeles", "United States", "US", "America/Los_Angeles"],
-    ["London", "United Kingdom", "GB", "Europe/London"],
-    ["Berlin", "Germany", "DE", "Europe/Berlin"],
-    ["Paris", "France", "FR", "Europe/Paris"],
-    ["Tokyo", "Japan", "JP", "Asia/Tokyo"],
-    ["Sydney", "Australia", "AU", "Australia/Sydney"],
-    ["Dubai", "United Arab Emirates", "AE", "Asia/Dubai"]
+    ["Hyderabad","India","IN","Asia/Kolkata"],
+    ["Mumbai","India","IN","Asia/Kolkata"],
+    ["Delhi","India","IN","Asia/Kolkata"],
+    ["New York","United States","US","America/New_York"],
+    ["Dallas","United States","US","America/Chicago"],
+    ["Chicago","United States","US","America/Chicago"],
+    ["Los Angeles","United States","US","America/Los_Angeles"],
+    ["London","United Kingdom","GB","Europe/London"],
+    ["Berlin","Germany","DE","Europe/Berlin"],
+    ["Paris","France","FR","Europe/Paris"],
+    ["Tokyo","Japan","JP","Asia/Tokyo"],
+    ["Sydney","Australia","AU","Australia/Sydney"],
+    ["Dubai","United Arab Emirates","AE","Asia/Dubai"]
 ];
 
 /* =========================
-   FLAG
+   FLATPICKR
 ========================= */
 
-function flagEmoji(code) {
+document.addEventListener("DOMContentLoaded", () => {
 
-    if (!code) return "🌍";
+    fp = flatpickr("#timeInput", {
+        enableTime:true,
+        allowInput:true,
+        dateFormat:"Y-m-d H:i",
+        defaultDate:new Date()
+    });
+
+    initSelect("#fromTimezone");
+    initSelect("#toTimezone");
+
+    setTimeout(() => {
+
+        selectDefault(
+            "#fromTimezone",
+            "Hyderabad",
+            "India",
+            "IN",
+            "Asia/Kolkata"
+        );
+
+        selectDefault(
+            "#toTimezone",
+            "New York",
+            "United States",
+            "US",
+            "America/New_York"
+        );
+
+        updateCurrentTime();
+        convertTime();
+
+    },300);
+});
+
+/* =========================
+   FLAGS
+========================= */
+
+function flagEmoji(code){
+
+    if(!code) return "🌍";
 
     return code
         .toUpperCase()
-        .replace(
-            /./g,
-            c =>
-                String.fromCodePoint(
-                    127397 + c.charCodeAt()
-                )
+        .replace(/./g,char =>
+            String.fromCodePoint(
+                127397 + char.charCodeAt()
+            )
         );
 }
-
-/* =========================
-   INIT
-========================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        fp = flatpickr(
-            "#timeInput",
-            {
-                enableTime: true,
-                allowInput: true,
-                dateFormat: "Y-m-d H:i",
-                defaultDate: new Date()
-            }
-        );
-
-        initSelect("#fromTimezone");
-        initSelect("#toTimezone");
-
-        setTimeout(() => {
-
-            $("#fromTimezone")
-                .val("Asia/Kolkata")
-                .trigger("change");
-
-            $("#toTimezone")
-                .val("America/New_York")
-                .trigger("change");
-
-            updateCurrentTime();
-
-            convertTime();
-
-        }, 300);
-    }
-);
 
 /* =========================
    TEMPLATE
 ========================= */
 
-function renderLocation(item) {
+function renderLocation(item){
 
-    if (!item.id)
+    if(!item.id)
         return item.text;
 
     return $(`
@@ -97,11 +96,11 @@ function renderLocation(item) {
             <div class="location-left">
 
                 <div class="city">
-                    ${flagEmoji(item.countryCode)}
-                    ${item.city}
+                    📍 ${item.city}
                 </div>
 
                 <div class="country">
+                    ${flagEmoji(item.countryCode)}
                     ${item.country}
                 </div>
 
@@ -111,198 +110,183 @@ function renderLocation(item) {
     `);
 }
 
-function renderSelection(item) {
+function renderSelection(item){
 
-    if (!item.city)
+    if(!item.city)
         return item.text;
 
     return `
+        📍 ${item.city}
         ${flagEmoji(item.countryCode)}
-        ${item.city}
     `;
 }
 
 /* =========================
-   DROPDOWN
+   INIT SELECT2
 ========================= */
 
-function initSelect(selector) {
+function initSelect(selector){
 
-    const localData =
-        popularCities.map(x => ({
-            id: x[3], // timezone
-            city: x[0],
-            country: x[1],
-            countryCode: x[2],
-            timezone: x[3],
-            text: x[0]
-        }));
+    const localData = popularCities.map(c => ({
+        id:c[3],
+        city:c[0],
+        country:c[1],
+        countryCode:c[2],
+        timezone:c[3],
+        text:c[0]
+    }));
 
     $(selector).select2({
 
-        width: "100%",
+        width:"100%",
 
-        data: localData,
+        data:localData,
 
-        templateResult: renderLocation,
+        templateResult:renderLocation,
 
-        templateSelection: renderSelection,
+        templateSelection:renderSelection,
 
-        escapeMarkup: m => m,
+        escapeMarkup:m=>m,
 
-        ajax: {
+        ajax:{
 
-            delay: 300,
+            delay:300,
 
-            transport: async function (
-                params,
-                success,
-                failure
-            ) {
+            transport:async function(params,success,failure){
 
-                const term =
-                    params.data.term;
+                const term = params.data.term;
 
-                if (
-                    !term ||
-                    term.length < 2
-                ) {
+                if(!term || term.length < 2){
 
-                    success({
-                        results: []
-                    });
-
+                    success({results:[]});
                     return;
                 }
 
-                try {
+                try{
 
-                    const response =
-                        await fetch(
-                            `https://secure.geonames.org/searchJSON?q=${encodeURIComponent(term)}&maxRows=15&featureClass=P&orderby=population&username=${GEO_USERNAME}`
-                        );
+                    const res = await fetch(
+                        `https://secure.geonames.org/searchJSON?q=${encodeURIComponent(term)}&maxRows=15&featureClass=P&orderby=population&username=${GEO_USERNAME}`
+                    );
 
-                    const data =
-                        await response.json();
-
-                    const results =
-                        data.geonames.map(
-                            city => ({
-
-                                id:
-                                    city.geonameId,
-
-                                city:
-                                    city.name,
-
-                                country:
-                                    city.countryName,
-
-                                countryCode:
-                                    city.countryCode,
-
-                                lat:
-                                    city.lat,
-
-                                lng:
-                                    city.lng,
-
-                                text:
-                                    city.name
-                            })
-                        );
+                    const data = await res.json();
 
                     success({
-                        results
+                        results:data.geonames.map(city => ({
+
+                            id:city.geonameId,
+
+                            city:city.name,
+
+                            country:city.countryName,
+
+                            countryCode:city.countryCode,
+
+                            lat:city.lat,
+
+                            lng:city.lng,
+
+                            text:city.name
+
+                        }))
                     });
 
-                } catch (err) {
+                }catch(err){
 
                     failure(err);
                 }
             },
 
-            processResults:
-                data => data
+            processResults:data=>data
         }
     });
 
     $(selector).on(
         "select2:select",
-        async function (e) {
+        async function(e){
 
-            const item =
-                e.params.data;
+            const item = e.params.data;
 
-            if (
-                !item.lat ||
-                !item.lng
-            ) {
+            if(!item.lat)
                 return;
-            }
 
-            try {
+            try{
 
-                const response =
-                    await fetch(
-                        `https://secure.geonames.org/timezoneJSON?lat=${item.lat}&lng=${item.lng}&username=${GEO_USERNAME}`
-                    );
-
-                const tz =
-                    await response.json();
-
-                const timezone =
-                    tz.timezoneId;
-
-                // Save timezone on select
-                $(this).data(
-                    "timezone",
-                    timezone
+                const res = await fetch(
+                    `https://secure.geonames.org/timezoneJSON?lat=${item.lat}&lng=${item.lng}&username=${GEO_USERNAME}`
                 );
 
-                $(this).data(
-                    "city",
-                    item.city
-                );
+                const tz = await res.json();
+
+                $(this).data("city",item.city);
+                $(this).data("country",item.country);
+                $(this).data("countryCode",item.countryCode);
+                $(this).data("timezone",tz.timezoneId);
 
                 updateCurrentTime();
-
                 convertTime();
 
-            } catch (err) {
+            }catch(err){
 
-                console.error(
-                    err
-                );
+                console.error(err);
             }
         }
     );
 }
 
 /* =========================
-   GET TIMEZONE
+   DEFAULT
 ========================= */
 
-function getTimezone(selector) {
+function selectDefault(
+    selector,
+    city,
+    country,
+    code,
+    timezone
+){
 
-    const stored =
-        $(selector)
-            .data("timezone");
+    $(selector).data("city",city);
+    $(selector).data("country",country);
+    $(selector).data("countryCode",code);
+    $(selector).data("timezone",timezone);
 
-    if (stored)
-        return stored;
+    $(selector)
+        .val(timezone)
+        .trigger("change");
+}
 
-    const selected =
-        $(selector)
-            .select2("data")[0];
+/* =========================
+   HELPERS
+========================= */
 
-    if (!selected)
-        return "UTC";
+function getZone(selector){
 
     return (
-        selected.timezone ||
-        selected.id ||
-        "UTC"
+        $(selector).data("timezone")
+        ||
+        $(selector).val()
+    );
+}
+
+function getCity(selector){
+
+    return (
+        $(selector).data("city")
+        ||
+        $(selector).select2("data")[0]?.city
+        ||
+        "Unknown"
+    );
+}
+
+function getCountryCode(selector){
+
+    return (
+        $(selector).data("countryCode")
+        ||
+        $(selector).select2("data")[0]?.countryCode
+        ||
+        ""
     );
 }
 
@@ -310,39 +294,27 @@ function getTimezone(selector) {
    CURRENT TIME
 ========================= */
 
-function updateCurrentTime() {
+function updateCurrentTime(){
 
-    const zone =
-        getTimezone(
-            "#fromTimezone"
+    const zone = getZone("#fromTimezone");
+
+    const now = DateTime.now()
+        .setZone(zone)
+        .toFormat(
+            "cccc, dd LLL yyyy, hh:mm a"
         );
 
-    const now =
-        DateTime.now()
-            .setZone(zone)
-            .toFormat(
-                "cccc, dd LLL yyyy, hh:mm a"
-            );
-
-    document
-        .getElementById(
-            "currentTime"
-        )
-        .innerHTML =
-        `Current time: ${now}`;
+    document.getElementById(
+        "currentTime"
+    ).innerHTML =
+    `Current time: ${now}`;
 }
-
-$(document).on(
-    "change",
-    "#fromTimezone",
-    updateCurrentTime
-);
 
 /* =========================
    NOW
 ========================= */
 
-function setNow() {
+function setNow(){
 
     fp.setDate(
         new Date(),
@@ -356,46 +328,32 @@ function setNow() {
    SWAP
 ========================= */
 
-function swapTimezones() {
+function swapTimezones(){
 
-    const fromZone =
-        getTimezone(
-            "#fromTimezone"
-        );
+    const fromData = {
+        city:$("#fromTimezone").data("city"),
+        country:$("#fromTimezone").data("country"),
+        countryCode:$("#fromTimezone").data("countryCode"),
+        timezone:$("#fromTimezone").data("timezone")
+    };
 
-    const toZone =
-        getTimezone(
-            "#toTimezone"
-        );
+    const toData = {
+        city:$("#toTimezone").data("city"),
+        country:$("#toTimezone").data("country"),
+        countryCode:$("#toTimezone").data("countryCode"),
+        timezone:$("#toTimezone").data("timezone")
+    };
 
-    $("#fromTimezone")
-        .data(
-            "timezone",
-            toZone
-        );
+    $("#fromTimezone").data(toData);
+    $("#toTimezone").data(fromData);
 
-    $("#toTimezone")
-        .data(
-            "timezone",
-            fromZone
-        );
+    const fromVal = $("#fromTimezone").val();
+    const toVal = $("#toTimezone").val();
 
-    const fromVal =
-        $("#fromTimezone")
-            .val();
+    $("#fromTimezone").val(toVal).trigger("change");
+    $("#toTimezone").val(fromVal).trigger("change");
 
-    const toVal =
-        $("#toTimezone")
-            .val();
-
-    $("#fromTimezone")
-        .val(toVal)
-        .trigger("change");
-
-    $("#toTimezone")
-        .val(fromVal)
-        .trigger("change");
-
+    updateCurrentTime();
     convertTime();
 }
 
@@ -403,94 +361,62 @@ function swapTimezones() {
    CONVERT
 ========================= */
 
-function convertTime() {
+function convertTime(){
 
-    if (
-        !fp ||
-        !fp.selectedDates.length
-    ) {
+    if(!fp.selectedDates.length)
         return;
-    }
 
-    const fromZone =
-        getTimezone(
-            "#fromTimezone"
-        );
+    const fromZone = getZone("#fromTimezone");
+    const toZone = getZone("#toTimezone");
 
-    const toZone =
-        getTimezone(
-            "#toTimezone"
-        );
+    const d = fp.selectedDates[0];
 
-    const d =
-        fp.selectedDates[0];
-
-    const source =
-        DateTime.fromObject(
-            {
-                year:
-                    d.getFullYear(),
-                month:
-                    d.getMonth() + 1,
-                day:
-                    d.getDate(),
-                hour:
-                    d.getHours(),
-                minute:
-                    d.getMinutes()
-            },
-            {
-                zone:
-                    fromZone
-            }
-        );
-
-    if (!source.isValid) {
-
-        document
-            .getElementById(
-                "result"
-            )
-            .innerHTML =
-            "Invalid source timezone";
-
-        return;
-    }
+    const source = DateTime.fromObject(
+        {
+            year:d.getFullYear(),
+            month:d.getMonth()+1,
+            day:d.getDate(),
+            hour:d.getHours(),
+            minute:d.getMinutes()
+        },
+        {
+            zone:fromZone
+        }
+    );
 
     const converted =
-        source.setZone(
-            toZone
-        );
+        source.setZone(toZone);
 
-    if (!converted.isValid) {
+    document.getElementById("result")
+    .innerHTML = `
 
-        document
-            .getElementById(
-                "result"
-            )
-            .innerHTML =
-            "Invalid target timezone";
+        <div class="result-route">
 
-        return;
-    }
+            <div class="result-city">
+                <span class="pin">📍</span>
+                ${getCity("#fromTimezone")}
+                <span class="flag">
+                    ${flagEmoji(
+                        getCountryCode("#fromTimezone")
+                    )}
+                </span>
+            </div>
 
-    document
-        .getElementById(
-            "result"
-        )
-        .innerHTML = `
+            ➜
 
-        <div style="
-            color:#777;
-            font-size:13px;
-        ">
-            ${fromZone}
-            →
-            ${toZone}
+            <div class="result-city">
+                <span class="pin">📍</span>
+                ${getCity("#toTimezone")}
+                <span class="flag">
+                    ${flagEmoji(
+                        getCountryCode("#toTimezone")
+                    )}
+                </span>
+            </div>
+
         </div>
 
         <div style="
-            margin-top:12px;
             font-size:28px;
             font-weight:700;
             color:#4361ee;
@@ -501,8 +427,8 @@ function convertTime() {
         </div>
 
         <div style="
-            margin-top:8px;
             font-size:22px;
+            margin-top:8px;
         ">
             ${converted.toFormat(
                 "hh:mm a"
@@ -515,21 +441,24 @@ function convertTime() {
         ">
             GMT${converted.toFormat("ZZ")}
         </div>
-        `;
+    `;
 }
 
 /* =========================
-   ENTER
+   EVENTS
 ========================= */
+
+$(document).on(
+    "change",
+    "#fromTimezone",
+    updateCurrentTime
+);
 
 document.addEventListener(
     "keydown",
     e => {
 
-        if (
-            e.key === "Enter"
-        ) {
+        if(e.key==="Enter")
             convertTime();
-        }
     }
 );
